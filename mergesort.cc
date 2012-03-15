@@ -1,7 +1,8 @@
 #include <algorithm>
 #include <cassert>
-#include <time.h>
 #include <vector>
+
+#include "util.h"
 
 
 template <typename Container>
@@ -15,11 +16,11 @@ Container merge(const Container& left,
 
     while (i != left.end() && j != right.end()) {
         if (*i <= *j) {
-            result.push_back(*i);
+            std::copy(i, i + 1, std::back_inserter(result));
             i++;
         }
         else {
-            result.push_back(*j);
+            std::copy(j, j + 1, std::back_inserter(result));
             j++;
         }
     }
@@ -48,28 +49,6 @@ Container mergesort(const Container& seq) {
 
     return merge(mergesort(left), mergesort(right));
 }
-
-
-template <typename Container1, typename Container2>
-bool sequences_are_equal(const Container1& seq1, const Container2& seq2) {
-    typedef typename Container1::const_iterator Iter1;
-    typedef typename Container2::const_iterator Iter2;
-    typedef std::pair<Iter1, Iter2> IterPair;
-    IterPair mismatch_pair = std::mismatch(seq1.begin(), seq1.end(),
-                                           seq2.begin());
-    return mismatch_pair.first == seq1.end();
-}
-
-
-struct randint {
-    int range;
-public:
-    randint(int range) : range(range) {}
-
-    int operator()() {
-        return (rand() / RAND_MAX) * range;
-    }
-};
 
 
 void test_mergesort() {
