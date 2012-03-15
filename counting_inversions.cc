@@ -32,12 +32,10 @@ InversionResult<Container> merge_and_count_inversions(
 
     while (i != left.end() && j != right.end()) {
         if (*i <= *j) {
-            std::copy(i, i + 1, std::back_inserter(result.sorted));
-            i++;
+            result.sorted.push_back(*i++);
         }
         else {
-            std::copy(j, j + 1, std::back_inserter(result.sorted));
-            j++;
+            result.sorted.push_back(*j++);
             result.inversions += left.end() - i;
         }
     }

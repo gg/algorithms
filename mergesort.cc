@@ -16,12 +16,10 @@ Container merge(const Container& left,
 
     while (i != left.end() && j != right.end()) {
         if (*i <= *j) {
-            std::copy(i, i + 1, std::back_inserter(result));
-            i++;
+            result.push_back(*i++);
         }
         else {
-            std::copy(j, j + 1, std::back_inserter(result));
-            j++;
+            result.push_back(*j++);
         }
     }
 
