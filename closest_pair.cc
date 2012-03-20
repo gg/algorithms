@@ -21,6 +21,13 @@ struct Point {
     bool operator==(const Point& other) const {
         return this->x == other.x && this->y == other.y;
     }
+
+    bool operator<(const Point& other) const {
+        if (this->x == other.x) {
+            return this->y < other.y;
+        }
+        return this->x < other.x;
+    }
 };
 
 
@@ -149,7 +156,7 @@ PointPair find_closest_pair_rec(RandomAccessIterator px_begin,
                                 RandomAccessIterator py_begin,
                                 RandomAccessIterator py_end) {
     if ((px_end - px_begin < 4) || (py_end - py_begin < 4)) {
-        std::set<Point, sort_by_x_value> points(px_begin, px_end);
+        std::set<Point> points(px_begin, px_end);
         std::copy(py_begin, py_end, std::inserter(points, points.begin()));
         return find_closest_pair_bruteforce(points.begin(), points.end());
     }
