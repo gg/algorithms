@@ -85,9 +85,8 @@ def run_random_game():
         pass
 
 
-def pairwise(seq):
-    """Returns a pairwise generator over a non-empty sequence `seq`, wrapping
-    the last item with the first.
+def pairwise(iterable):
+    """Returns a generator of consecutive pairs of items in `iterable`.
 
     >>> for i, j in pairwise([1, 2, 3, 4, 5]):
     ...     print((i, j))
@@ -99,7 +98,7 @@ def pairwise(seq):
     
     Credit to Martin v. Löwis: http://stackoverflow.com/a/1257446
     """
-    i = iter(seq)
+    i = iter(iterable)
     first = prev = item = next(i)
     for item in i:
         yield prev, item
