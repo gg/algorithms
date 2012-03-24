@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <time.h>
 
 template <typename Container1, typename Container2>
 bool sequences_are_equal(const Container1& seq1, const Container2& seq2) {
@@ -13,11 +12,13 @@ bool sequences_are_equal(const Container1& seq1, const Container2& seq2) {
 
 
 struct randint {
-    int range;
+    int start;
+    int stop;
 public:
-    randint(int range) : range(range) {}
+    randint(int stop) : start(0), stop(stop) {}
+    randint(int start, int stop) : start(start), stop(stop) {}
 
     int operator()() {
-        return (rand() / RAND_MAX) * range;
+        return rand() % (this->stop - 1) + start;
     }
 };
