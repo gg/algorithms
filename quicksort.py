@@ -2,41 +2,42 @@
 
 from __future__ import division
 from functools import partial
+import math
 import random
 
 
-def naive_pivot(A, first, last):
-    """Given a partition of `A` in range [`first`, `last`), naively returns
-    the leftmost `first` as the pivot index. While this works well when the
-    items in `A` are randomly ordered, it causes quicksort to run in worst-case
-    O(n^2) when `A` is (mostly) sorted.
-    """
-    return first
-
-
 def random_pivot(A, first, last):
-    '''Given a partition of `A` in range [`first`, `last`), returns a pivot 
-    index uniformly at random. Selecting a random pivot allows quicksort to run
-    in O(nlogn) expected time when `A` is (mostly) sorted.
+    '''Given a partition `A[first:last]` returns an index in range [`first`,
+    `last`), chosen uniformly at random.
     '''
     return random.randrange(first, last)
 
 
-def median_pivot(A, first, last):
-    """Given a partition of `A` in range [`first`, `last`), sorts `A[first]`,
-    `A[middle]`, `A[last - 1]` such that `A[first] <= A[middle] <= A[last]` and
-    returns `middle` as the pivot index, where
-    `middle = (first + (last - first) // 2)`.
+def median_of_three(A, first, last):
+    '''Given a partition `A[first:last]`, returns the index of the median of
+    the first, middle, and last items of the partition, where
+    middle = first + (last - first) // 2.
+
+    As an optimization, the first, middle, and last items are sorted relative
+    to each other (A[first] <= A[middle] <= A[last - 1]), thus the middle index 
+    is always returned.
     
     Choosing a median pivot in this way has its advantages:
-       - Allows quicksort to run in O(nlogn) when `A` is (mostly) sorted.
-       - Makes it more difficult to manipulate `A` such that quicksort runs in
-         worst-case O(n^2).
-       - Is is generally faster than using a pseudo-random number generator.
-    """
+      - Allows quicksort to run in O(nlogn) when `A` is (mostly) sorted.
+      - Makes it more difficult to manipulate `A` such that quicksort runs in
+        worst-case O(n^2).
+      - Is is generally faster than using a pseudo-random number generator.
+    '''
     last = last - 1
-    middle = first + ((last - first) // 2)
+    middle = first + (last - first) // 2
 
+    # For added benefit, the first, middle, and last items of `A` in range
+    # [`first`, `last`) are sorted with respect to each other, such that:
+    #
+    #     `A[first] <= A[middle] <= A[last - 1]`
+    #
+    # This makes it more difficult ot manipulate `A` such that quickosort runs
+    # in worst-case O(n^2).
     if A[first] > A[middle]:
         A[first], A[middle] = A[middle], A[first]
 
@@ -50,19 +51,21 @@ def median_pivot(A, first, last):
 
 
 def partition(A, first, last, choose_pivot):
-    '''Partitions the items of A in range [`first`, `last`) about a pivot
-    chosen by `choose_pivot` as follows:
+    '''Partitions the items of `A[first:last]` about a pivot chosen by
+    `choose_pivot` as follows:
         
         [    <    i][   p][     >    ]
       first                         last
 
-    - [    <    i] contains items less than the pivot, with i indexing the
-      rightmost item in this section.
-    - [   p] contains items equal to the pivot, with p indexing the
-      rightmost item in this section.
-    - [     >    ] contains items greater than the pivot.
+    [    <    i] contains items less than the pivot, with i indexing the
+    rightmost item in this section.
 
-    Returns a pair of indexes corresponding to the first and last items of the
+    [   p] contains items equal to the pivot, with p indexing the rightmost
+    item in this section.
+
+    [     >    ] contains items greater than the pivot.
+
+    Returns a pair of indices corresponding to the first and last items of the
     pivot section, `i + 1` and `p` respectively.
 
     If `choose_pivot` runs in O(1) time, this algorithm runs in O(n) time.
@@ -114,53 +117,62 @@ def partition(A, first, last, choose_pivot):
     return i + 1, p
 
 
-def quicksort(A, first=None, last=None, choose_pivot=median_pivot):
+def quicksort(A, first=None, last=None, choose_pivot=median_of_three):
+    '''Sorts `A[first:last]` in-place by recursively partitioning items
+    about pivots chosen by a `choose_pivot` callable.
+
+    `choose_pivot` is passed 3 parameters: (`A`, `first`, `last`),
+    corresponding to the partition `A[first:last]`, and must return an
+    integer index in range `[first, last)`.
+
+    Returns the estimated total number of comparisons made by each recursive
+    call. Since the number of comparisons depends on which items are chosen as
+    pivots, you can use this to compare the relative performance of various
+    `choose_pivot` implementations.
+    '''
     first = first if first is not None else 0
     last = last if last is not None else len(A)
+
     if last - first < 2:
-        return
+        return 0
+
+    # The number of comparisons is estimated to be (last - first - 1),
+    # since the chosen pivot will be compared with each of the other
+    # (last - first - 1) items.
     pivot_first, pivot_last = partition(A, first, last, choose_pivot)
-    quicksort(A, first, pivot_first, choose_pivot)
-    quicksort(A, pivot_last + 1, last, choose_pivot)
+    comparisons = last - first - 1
 
-
-naive_quicksort = partial(quicksort, choose_pivot=naive_pivot)
-
-
-randomized_quicksort = partial(quicksort, choose_pivot=random_pivot)
-
-
-median_quicksort = partial(quicksort, choose_pivot=median_pivot)
-
-
-RAND_SEQUENCE = [random.randrange(10000) for _ in range(100000)]
-
-
-def test_quicksort(quicksort_func, A):
-    expected = sorted(A)
-    quicksort_func(A)
-    assert(A == expected)
+    return (comparisons
+            + quicksort(A, first, pivot_first, choose_pivot)
+            + quicksort(A, pivot_last + 1, last, choose_pivot))
 
 
 if __name__ == '__main__':
-    from timeit import Timer
+    random_input = ('random sequence of 100000 ints',
+                    [random.randrange(10000) for _ in range(100000)])
+    sorted_input = ('sorted sequence of 100000 ints', list(range(100000)))
 
-    tests = ['test_quicksort(naive_quicksort, RAND_SEQUENCE[:])',
-             'test_quicksort(randomized_quicksort, RAND_SEQUENCE[:])',
-             'test_quicksort(median_quicksort, RAND_SEQUENCE[:])',
-             'test_quicksort(naive_quicksort, sorted(RAND_SEQUENCE))',
-             'test_quicksort(randomized_quicksort, sorted(RAND_SEQUENCE))',
-             'test_quicksort(median_quicksort, sorted(RAND_SEQUENCE))']
+    choose_pivot_funcs = [('first', lambda A, first, last: first),
+                          ('last', lambda A, first, last: last - 1),
+                          ('random', random_pivot),
+                          ('median_of_three', median_of_three)]
 
-    for test in tests:
-        imports = ','.join(['test_quicksort', 'naive_quicksort',
-                            'randomized_quicksort', 'median_quicksort',
-                            'RAND_SEQUENCE'])
-        t = Timer(test, 'from __main__ import ' + imports)
-        result = None
-        try:
-            result = t.timeit(5)
-        except RuntimeError as e:
-            result = e
-        finally:
-            print(test[14:], '  ', result)
+    for input_name, input_array in (random_input, sorted_input):
+        print('==>', input_name)
+
+        headers = ('choose_pivot', 'comparisons')
+        fmt = '    {:<18}'
+        print(''.join(fmt.format(header) for header in headers))
+        print(''.join(fmt.format('-' * len(header)) for header in headers))
+
+        for pivot_func_name, pivot_func in choose_pivot_funcs:
+            A = input_array[:]
+            try:
+                comparisons = quicksort(A, choose_pivot=pivot_func)
+                assert(A == sorted(A))
+            except RuntimeError as e:
+                comparisons = e
+
+            print(''.join(fmt.format(value) for value in (pivot_func_name,
+                                                          comparisons)))
+        print()

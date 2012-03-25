@@ -8,11 +8,9 @@
 #include "util.h"
 
 
-struct NaivePivot {
-    // Given a range of items [first, last), naively selects first as the
-    // pivot. While this works well when the items items in the input sequence
-    // are unordered, it causes quicksort to run in worst-case O(n^2) when the
-    // input sequence is (mostly) sorted.
+struct First {
+    // Given a pair of iterators, first and last, corresponding to items in
+    // range [first, last), returns first.
     template<typename RandomAccessIterator>
     RandomAccessIterator operator()(RandomAccessIterator first,
                                     RandomAccessIterator last) {
@@ -21,18 +19,32 @@ struct NaivePivot {
 };
 
 
-struct MedianPivot {
-    // Given a range of items [first, last), returns an iterator to the median
-    // of *first, *(last - 1), and *middle, where middle = (first - last) / 2.
+struct Last {
+    // Given a pair of iterators, first and last, corresponding to items in
+    // range [first, last), returns (last - 1).
+    template<typename RandomAccessIterator>
+    RandomAccessIterator operator()(RandomAccessIterator first,
+                                    RandomAccessIterator last) {
+        return last - 1;
+    }
+};
+
+
+struct MedianOfThree {
+    // Given a pair of iterators, first and last, corresponding to items in
+    // range [first, last), returns an iterator to the median
+    // of *first, *(last - 1), and *middle, where
+    // middle = first + (last - first) / 2.
     //
-    // As an optimization, first, last, and middle are sorted relative to each
-    // other (*first <= *middle <= *(last - 1)), thus middle is always
-    // returned.
+    // As an optimization, the first, last, and middle items are sorted
+    // relative to each other (*first <= *middle <= *(last - 1)), thus middle
+    // is always returned.
     // 
     // Choosing a median pivot in this way has its advantages:
-    //  - Allows quicksort to run in O(nlogn) when `A` is (mostly) sorted.
-    //  - Makes it more difficult to manipulate `A` such that quicksort runs in
-    //    worst-case O(n^2).
+    //  - Allows quicksort to run in O(nlogn) when the input sequence is
+    //    (mostly) sorted.
+    //  - Makes it more difficult to manipulate the input sequence such that
+    //    quicksort runs in worst-case O(n^2).
     //  - Is is generally faster than using a pseudo-random number generator.
     template<typename RandomAccessIterator>
     RandomAccessIterator operator()(RandomAccessIterator first,
@@ -57,10 +69,10 @@ struct MedianPivot {
 };
 
 
-struct RandomPivot {
-    // Returns an iterator to a random item in range [first, last). Selecting
-    // a random pivot allows quicksort to run in O(nlogn) expected time when
-    // A is (mostly) sorted.
+struct Random {
+    // Given a pair of iterators, first and last, corresponding to items in
+    // range [first, last), returns an iterator to an item in
+    // range [first, last) selected uniformly at random.
     template <typename RandomAccessIterator>
     RandomAccessIterator operator()(RandomAccessIterator first,
                                     RandomAccessIterator last) {
@@ -69,25 +81,19 @@ struct RandomPivot {
 };
 
 
-// Partitions the input sequence in range [`first`, `last`) about a pivot
-// chosen by `choose_pivot` as follows:
+// Given a pair of iterators, first and last, corresponding to items in range
+// [first, last), partitions the items about a pivot chosen by `choose_pivot`
+// as follows:
 //    
-//    [    <    i][   p][     >    ]
+//    [    <     ][   p][     >    ]
 //  first                         last
 //
-// - [    <    i] contains items less than the pivot, where i is an iterator
-//   to the rightmost item in this section.
-// - [   p] contains items equal to the pivot, where p is an iterator to the
-//   rightmost item in this section.
-// - [     >    ] contains items greater than the pivot.
+// Where:
+//  [    <     ] contains items less than the pivot
+//  [   p] contains items equal to the pivot
+//  [     >    ] contains items greater than the pivot.
 //
-// Returns a pair of iterators corresponding to the first and last items the
-// pivot section, `i + 1` and `p` respectively.
-//
-// If `choose_pivot` runs in O(1) time, this algorithm runs in O(n) time.
-// Also note that irrespective of how the pivot is chosen, quicksort runs in
-// O(nlogn) *expected time* (averaged over all permutation of the input
-// sequence).
+// Returns a pair of iterators to the first and last items in [  p].
 template <typename RandomAccessIterator, typename ChoosePivot>
 std::pair<RandomAccessIterator, RandomAccessIterator> partition_section(
         RandomAccessIterator first, RandomAccessIterator last,
@@ -98,16 +104,23 @@ std::pair<RandomAccessIterator, RandomAccessIterator> partition_section(
 
     // Each iteration, we advance i and j, partitioning the input sequence as
     // follows:
+    //
     //     [   p][  <  i][  >  j][     ?     ]
     //   first                              last
     // 
-    // - [   p] contains items equal to the pivot, with p indexing the
+    // Where:
+    //
+    //   [   p] contains items equal to the pivot, with p indexing the
     //   rightmost item in this section.
-    // - [  <  i] contains items less than the pivot, with i indexing the
+    //
+    //   [  <  i] contains items less than the pivot, with i indexing the
     //   rightmost item in this section.
-    // - [  >  j] contains items greater than the pivot, with j indexing
+    //
+    //   [  >  j] contains items greater than the pivot, with j indexing
     //   the rightmost item in this section.
-    // - [     ?     ] contains unpartitioned items.
+    //
+    //   [     ?     ] contains unpartitioned items.
+    //
     //
     // When the loop terminates, the input sequence will be partitioned as
     // follows:
@@ -138,6 +151,12 @@ std::pair<RandomAccessIterator, RandomAccessIterator> partition_section(
 }
 
 
+// Sorts items in range [first, last) in-place by recursively partitioning
+// items about pivots chosen by a `choose_pivot` function/functor.
+//
+// `choose_pivot` is a passed a pair of iterators: (first, last),
+// corresponding to a partition of items in range [first, last), and must
+// return an iterator to an item in range [first, last).
 template <typename RandomAccessIterator, typename ChoosePivot>
 void quicksort(RandomAccessIterator first, RandomAccessIterator last,
                ChoosePivot choose_pivot) {
@@ -153,35 +172,43 @@ void quicksort(RandomAccessIterator first, RandomAccessIterator last,
 
 template <typename RandomAccessIterator>
 void quicksort(RandomAccessIterator first, RandomAccessIterator last) {
-    quicksort(first, last, MedianPivot());
+    quicksort(first, last, MedianOfThree());
 }
 
 
-void test_quicksort() {
-    srand(time(NULL));
+template <typename Container, typename ChoosePivot>
+void test_quicksort(const Container& container, ChoosePivot choose_pivot) {
+    Container sorted(container);
+    std::sort(sorted.begin(), sorted.end());
 
-    std::vector<int> A1(100001);
-    std::generate_n(A1.begin(), A1.size(), randint(1000));
-    std::vector<int> A2(A1);
-    std::vector<int> A3(A1);
+    Container actual(container);
+    quicksort(actual.begin(), actual.end(), choose_pivot);
 
-    std::vector<int> A_sorted(A1);
-    std::sort(A_sorted.begin(), A_sorted.end());
-
-    quicksort(A1.begin(), A1.end(), NaivePivot());
-    assert(sequences_are_equal(A1, A_sorted));
-
-    quicksort(A2.begin(), A2.end(), RandomPivot());
-    assert(sequences_are_equal(A2, A_sorted));
-
-    quicksort(A3.begin(), A3.end(), MedianPivot());
-    assert(sequences_are_equal(A3, A_sorted));
-
-    std::cout << "Tests passed." << std::endl;
+    assert(sequences_are_equal(actual, sorted));
 }
 
 
 int main(int argc, char** argv) {
-    test_quicksort();
+    srand(time(NULL));
+
+    std::vector<int> rand_seq(10000);
+    std::generate_n(rand_seq.begin(), rand_seq.size(), randint(1000));
+
+    std::vector<int> sorted_seq(rand_seq);
+    std::sort(sorted_seq.begin(), sorted_seq.end());
+
+    std::vector<std::vector<int> > inputs;
+    inputs.push_back(rand_seq);
+    inputs.push_back(sorted_seq);
+
+    std::vector<std::vector<int> >::iterator i;
+    for (i = inputs.begin(); i != inputs.end(); i++) {
+        test_quicksort(*i, First());
+        test_quicksort(*i, Last());
+        test_quicksort(*i, Random());
+        test_quicksort(*i, MedianOfThree());
+    }
+
+    std::cout << "Tests passed." << std::endl;
     return 0;
 }
