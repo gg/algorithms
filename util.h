@@ -1,4 +1,10 @@
+#ifndef ALGORITHMS_UTIL_H
+#define ALGORITHMS_UTIL_H
+
 #include <algorithm>
+
+namespace algorithms {
+namespace util {
 
 template <typename Container1, typename Container2>
 bool sequences_are_equal(const Container1& seq1, const Container2& seq2) {
@@ -22,3 +28,8 @@ public:
         return rand() % (this->stop - 1) + start;
     }
 };
+
+} // namespace util
+} // namespace algorithms
+
+#endif // ALGORITHMS_UTIL_H

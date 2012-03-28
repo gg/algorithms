@@ -1,8 +1,12 @@
 #include <algorithm>
 #include <cassert>
 #include <vector>
+#include <ctime>
 
 #include "util.h"
+
+
+namespace util = algorithms::util;
 
 
 template <typename Container>
@@ -54,10 +58,10 @@ void test_mergesort() {
     Vector seq(1000);
     srand(time(NULL));
     for (int i = 0; i < 1000; i++) {
-        std::generate_n(seq.begin(), seq.size(), randint(100));
+        std::generate_n(seq.begin(), seq.size(), util::randint(100));
         Vector sorted(seq.begin(), seq.end());
         std::sort(sorted.begin(), sorted.end());
-        assert(sequences_are_equal(mergesort(seq), sorted));
+        assert(util::sequences_are_equal(mergesort(seq), sorted));
     }
 }
 

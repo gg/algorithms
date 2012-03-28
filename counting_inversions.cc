@@ -9,6 +9,9 @@
 #include "util.h"
 
 
+namespace util = algorithms::util;
+
+
 template <typename Container>
 struct InversionResult {
     Container sorted;
@@ -77,7 +80,7 @@ void test_single_input(const Container& seq, std::size_t expected_inversions) {
     Container sorted(seq.begin(), seq.end());
     std::sort(sorted.begin(), sorted.end());
 
-    assert(sequences_are_equal(result.sorted, sorted));
+    assert(util::sequences_are_equal(result.sorted, sorted));
     assert(result.inversions == expected_inversions);
 }
 
