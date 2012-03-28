@@ -1,12 +1,13 @@
 '''Solves the problem of computing the ith smallest element of an input array
-(e.g. the median) in linear time.'''
+(e.g. the median) in linear time.
+'''
 
 import random
 import quicksort
 
 
 def randomized_selection(A, i, first=None, last=None):
-    '''Returns the `i`th (indexed from 0) smallest element in `A[first:last]`.
+    '''Returns the `i`th smallest element (indexed from 0) in `A[first:last]`.
 
     >>> randomized_selection([3, 5, 7, 1, 9, 4, 6, 8], 4)
     6
@@ -26,7 +27,9 @@ def randomized_selection(A, i, first=None, last=None):
 
     pivot_index, _ = quicksort.partition(A, first, last,
                                          quicksort.random_pivot)
+
     normalized_pivot_index = pivot_index - first
+
     if normalized_pivot_index == i:
         return A[pivot_index]
     elif normalized_pivot_index > i:
