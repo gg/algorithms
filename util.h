@@ -20,15 +20,34 @@ bool sequences_are_equal(const Container1& seq1, const Container2& seq2) {
 }
 
 
+// Returns an integer in range [min, max) chosen uniformly at random.
+//
+// Credit goes to Ryan Reich: http://stackoverflow.com/a/6852396
+int random_range(unsigned min, unsigned max) {
+    int base_random = rand(); // in [0, RAND_MAX]
+    if (RAND_MAX == base_random)
+        return random_range(min, max);
+    // now guaranteed to be in [0, RAND_MAX)
+    int range = max - min,
+    remainder = RAND_MAX % range,
+    bucket = RAND_MAX / range;
+    // There are range buckets, plus one smaller interval within remainder
+    // of RAND_MAX
+    if (base_random < RAND_MAX - remainder)
+        return min + base_random/bucket;
+    return random_range (min, max);
+}
+
+
 struct randint {
     int start;
     int stop;
-public:
+
     randint(int stop) : start(0), stop(stop) {}
     randint(int start, int stop) : start(start), stop(stop) {}
 
     int operator()() {
-        return rand() % (this->stop - 1) + start;
+        return random_range(this->start, this->stop);
     }
 };
 
