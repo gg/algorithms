@@ -1,7 +1,7 @@
 A collection of algorithm implementations in Python and C++, written as part of
 my ongoing study of algorithms.
 
-Each source file is self-contained and can run independently:
+Each source file can run independently:
 
     $ python game_of_life.py
 
