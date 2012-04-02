@@ -1,3 +1,5 @@
+// Fischer-Yates shuffle
+
 #include <algorithm>
 #include <ctime>
 #include <iostream>

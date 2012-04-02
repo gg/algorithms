@@ -1,3 +1,5 @@
+// Counting array inversions
+
 #include <algorithm>
 #include <cassert>
 #include <fstream>

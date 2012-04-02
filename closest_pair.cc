@@ -1,5 +1,5 @@
-// Algorithm to find the closest pair of points in a 2-d plane.
-// For reference: http://en.wikipedia.org/wiki/Closest_pair_of_points_problem
+// Closest pair of points
+// See: http://en.wikipedia.org/wiki/Closest_pair_of_points_problem
 
 #include <algorithm>
 #include <cassert>

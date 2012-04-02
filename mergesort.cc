@@ -1,3 +1,5 @@
+// Merge sort
+
 #include <algorithm>
 #include <cassert>
 #include <vector>

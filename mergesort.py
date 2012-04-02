@@ -1,4 +1,8 @@
+# coding: utf-8
+'''Merge sort'''
+
 from __future__ import division
+from __future__ import print_function
 
 
 def mergesort(seq):
@@ -7,8 +11,8 @@ def mergesort(seq):
     if n < 2:
         return seq
 
-    left = seq[0:n//2]
-    right = seq[n//2:]
+    left = seq[0:n // 2]
+    right = seq[n // 2:]
     return merge(mergesort(left), mergesort(right))
 
 
@@ -36,6 +40,7 @@ def test_mergesort():
     for _ in range(1000):
         seq = [random.randint(0, 99) for i in range(1000)]
         assert(mergesort(seq[:]) == list(sorted(seq)))
+    print('Tests passed.')
 
 
 if __name__ == '__main__':

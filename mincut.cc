@@ -1,3 +1,6 @@
+// Minimum cut
+// See: http://en.wikipedia.org/wiki/Cut_(graph_theory)#Minimum_cut'''
+
 #include <cassert>
 #include <cmath>
 #include <ctime>
@@ -17,6 +20,12 @@ typedef std::string Vertex;
 typedef std::pair<Vertex, Vertex> Edge;
 
 
+
+// Given an undirected graph consisting of n vertices and m edges,
+// returns a *possible* min cut after n - 1 edge contractions, where edges are
+// chosen uniformly at random (Karger's algorithm).
+//
+// See: http://en.wikipedia.org/wiki/Karger%27s_algorithm
 std::vector<Edge> randomized_contraction(const std::vector<Vertex>& vertices,
                                          const std::vector<Edge>& edges) {
     std::vector<Edge> contracted_edges(edges);

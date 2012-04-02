@@ -1,6 +1,10 @@
-'''Algorithm to find the closest pair of points in a 2-d plane.
-For reference: http://en.wikipedia.org/wiki/Closest_pair_of_points_problem
+# coding: utf-8
+'''Closest pair of points
+See: http://en.wikipedia.org/wiki/Closest_pair_of_points_problem
 '''
+
+from __future__ import division
+from __future__ import print_function
 
 from collections import namedtuple
 from itertools import combinations
@@ -12,7 +16,7 @@ Point = namedtuple('Point', 'x y')
 
 def distance(p1, p2):
     '''Returns the Euclidean distance between 2-d points `p1` and `p2`.'''
-    return math.sqrt((p2.x - p1.x)**2 + (p2.y - p1.y)**2)
+    return math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2)
 
 
 def find_closest_pair_bruteforce(points):
@@ -92,3 +96,4 @@ if __name__ == '__main__':
     points = [Point(x, y) for x, y in [(1, 0), (2, 6), (2, 9), (3, 1), (4, 9),
                                        (6, 0), (8, 6)]]
     assert(set(find_closest_pair(points)) == set((Point(2, 9), Point(4, 9))))
+    print('Tests passed.')

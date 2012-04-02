@@ -1,6 +1,9 @@
-'''Conway's Game of Life algorithm.
-For reference: http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
+# coding: utf-8
+'''Conway's Game of Life
+See: http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
 '''
+
+from __future__ import print_function
 
 import itertools
 import random
@@ -53,7 +56,7 @@ def state_to_string(state, alive_char='o', dead_char=' '):
             s += dead_char * (abs(col) - abs(prev_col) - 1)
             s += alive_char
             prev_col = col
-        s += '\n' 
+        s += '\n'
 
     bot_right_point = str((rows[-1], max_col))
     s += ('-' * (max_col - len(bot_right_point))) + ' ' + bot_right_point
@@ -88,6 +91,8 @@ def run_random_game():
 def pairwise(iterable):
     """Returns a generator of consecutive pairs of items in `iterable`.
 
+    Credit to Martin v. Löwis: http://stackoverflow.com/a/1257446
+
     >>> for i, j in pairwise([1, 2, 3, 4, 5]):
     ...     print((i, j))
     ...
@@ -95,8 +100,6 @@ def pairwise(iterable):
     (2, 3)
     (3, 4)
     (4, 5)
-    
-    Credit to Martin v. Löwis: http://stackoverflow.com/a/1257446
     """
     i = iter(iterable)
     first = prev = item = next(i)
@@ -164,6 +167,8 @@ def test_patterns():
               set([(2, 2), (3, 3), (3, 4), (4, 2), (4, 3)])]
     for state, next_state in pairwise(glider):
         assert(transition(state) == next_state)
+
+    print('Tests passed.')
 
 
 if __name__ == '__main__':

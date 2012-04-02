@@ -1,4 +1,7 @@
 # coding: utf-8
+'''Fischer-Yates shuffle'''
+
+from __future__ import print_function
 
 import itertools
 import random

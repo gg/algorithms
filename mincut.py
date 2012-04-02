@@ -1,3 +1,8 @@
+# coding: utf-8
+'''Minimum cut
+See: http://en.wikipedia.org/wiki/Cut_(graph_theory)#Minimum_cut'''
+
+from __future__ import print_function
 from __future__ import unicode_literals
 
 from collections import namedtuple
@@ -10,7 +15,9 @@ import random
 def randomized_contraction(vertices, edges):
     '''Given an undirected graph consisting of n vertices and m edges,
     returns a *possible* min cut after n - 1 edge contractions, where edges are
-    chosen uniformly at random.
+    chosen uniformly at random (Karger's algorithm).
+
+    See: http://en.wikipedia.org/wiki/Karger%27s_algorithm
     '''
     contracted_edges = edges[:]
     for _ in itertools.repeat(None, len(vertices) - 2):
@@ -35,7 +42,7 @@ def randomized_contraction(vertices, edges):
 
 if __name__ == '__main__':
     adj_list = '''\
-     1    19    15    36    23  18  39 
+     1    19    15    36    23  18  39
      2    36    23     4    18  26  9
      3    35     6    16    11
      4    23     2    18    24
@@ -88,9 +95,11 @@ if __name__ == '__main__':
                 edges.append((vertex, endpoint))
 
     min_cut = edges
-    trials = int(math.log(len(vertices)) * len(vertices)**2)
+    trials = int(math.log(len(vertices)) * len(vertices) ** 2)
     for _ in itertools.repeat(None, trials):
         possible_min_cut = randomized_contraction(vertices, edges)
         if len(possible_min_cut) < len(min_cut):
             min_cut = possible_min_cut
     assert(len(min_cut) == 3)
+
+    print('Tests passed.')

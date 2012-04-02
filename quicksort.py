@@ -1,6 +1,9 @@
-'''Quicksort algorithm.'''
+# coding: utf-8
+'''Quicksort'''
 
 from __future__ import division
+from __future__ import print_function
+
 from functools import partial
 import math
 import random
@@ -19,9 +22,9 @@ def median_of_three(A, first, last):
     middle = first + (last - first) // 2.
 
     As an optimization, the first, middle, and last items are sorted relative
-    to each other (A[first] <= A[middle] <= A[last - 1]), thus the middle index 
+    to each other (A[first] <= A[middle] <= A[last - 1]), thus the middle index
     is always returned.
-    
+
     Choosing a median pivot in this way has its advantages:
       - Allows quicksort to run in O(nlogn) when `A` is (mostly) sorted.
       - Makes it more difficult to manipulate `A` such that quicksort runs in
@@ -53,7 +56,7 @@ def median_of_three(A, first, last):
 def partition(A, first, last, choose_pivot):
     '''Partitions the items of `A[first:last]` about a pivot chosen by
     `choose_pivot` as follows:
-        
+
         [    <    i][   p][     >    ]
       first                         last
 
@@ -81,7 +84,7 @@ def partition(A, first, last, choose_pivot):
     # Each iteration, we partition A as follows:
     #     [   p][  <  i][  >  j][     ?     ]
     #   first                              last
-    # 
+    #
     # - [   p] contains items equal to the pivot, with p indexing the
     #   rightmost item in this section.
     # - [  <  i] contains items less than the pivot, with i indexing the
@@ -102,7 +105,7 @@ def partition(A, first, last, choose_pivot):
                 p += 1
                 A[i], A[p] = A[p], A[i]
 
-    # Swap all the items equal to the pivot from the first of A with 
+    # Swap all the items equal to the pivot from the first of A with
     # the rightmost items that are less than the pivot (indexed by i).
     #
     # After the swaps, A will be partitioned as follows:

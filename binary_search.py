@@ -1,4 +1,8 @@
+# coding: utf-8
+'''Binary search'''
+
 from __future__ import division
+from __future__ import print_function
 
 
 def recursive_binary_search(sorted_sequence, key, start=0, end=None):
@@ -45,3 +49,5 @@ if __name__ == '__main__':
 
     assert(iterative_binary_search(seq, 12) == 8)
     assert(iterative_binary_search(seq, 13) == None)
+
+    print('Tests passed.')

@@ -1,3 +1,10 @@
+# coding: utf-8
+'''Counting array inversions'''
+
+from __future__ import division
+from __future__ import print_function
+
+
 def merge_and_count_inversions(left, right):
     sorted_arr = []
     cross_inversions = 0
@@ -13,9 +20,11 @@ def merge_and_count_inversions(left, right):
 
     sorted_arr.extend(left[i:] + right[j:])
     return sorted_arr, cross_inversions
-            
+
 
 def sort_and_count_inversions(arr):
+    '''Performs a merge-sort and counts the number of inversions during each
+    merge step.'''
     n = len(arr)
 
     if n < 2:
@@ -40,7 +49,7 @@ def test_count_inversions():
         ([1, 2, 3, 4, 5, 6], 0),
         ([6, 5, 4, 3, 2, 1], 15),
     ]
-                   
+
     for arr, expected_inversions in test_inputs:
         sorted_arr, inversions = sort_and_count_inversions(arr)
         assert(sorted_arr == list(sorted(arr)))
@@ -55,3 +64,4 @@ if __name__ == '__main__':
         sorted_arr, inversions = sort_and_count_inversions(arr)
         assert(sorted_arr == list(sorted(sorted_arr)))
         assert(inversions == 2407905288)
+        print('Tests passed.')

@@ -1,5 +1,5 @@
-// Conway's Game of Life algorithm.
-// For reference: http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
+// Conway's Game of Life
+// See: http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
 
 #include <algorithm>
 #include <cassert>
