@@ -1,5 +1,5 @@
-A collection of algorithm implementations in Python and C++, written as part of
-my ongoing study of algorithms.
+Algorithm implementations in Python and C++, written as part of my ongoing
+study of algorithms.
 
 Each source file can run independently:
 
