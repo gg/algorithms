@@ -26,7 +26,6 @@ See: http://en.wikipedia.org/wiki/Cut_(graph_theory)#Minimum_cut'''
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from collections import namedtuple
 import itertools
 import io
 import math
