@@ -153,6 +153,22 @@ def strongly_connected_components(directed_graph):
     return connected_components
 
 
+def dijkstra_shortest_path(graph, start_vertex):
+    '''Dijkstra's shortest path algorithm'''
+    shortest_distances = {start_vertex: 0}
+    while True:
+        edges = ((from_v, to_v, shortest_distances[from_v] + weight)
+                 for from_v in shortest_distances
+                 for to_v, weight in graph[from_v]
+                 if to_v not in shortest_distances)
+        try:
+            min_edge = min(edges, key=lambda edge: edge[2])
+            from_v, to_v, distance = min_edge
+            shortest_distances[to_v] = distance
+        except ValueError: # raised by min() when no more edges to consider
+            return shortest_distances
+
+
 if __name__ == '__main__':
     graph = {'s': ['a', 'b'],
              'a': ['c', 's'],
@@ -221,5 +237,13 @@ if __name__ == '__main__':
 
     # Example from http://en.wikipedia.org/wiki/Topological_sorting#Examples
     assert(list(topological_sort(digraph3)) == [7, 5, 11, 3, 10, 8, 9, 2])
+
+
+    weighted_digraph = {'s': [('v', 1), ('w', 4)],
+                        'v': [('w', 2), ('t', 6)],
+                        'w': [('t', 3)],
+                        't': []}
+    assert(dijkstra_shortest_path(weighted_digraph, 's') ==
+           {'s': 0, 'v': 1, 'w': 3, 't': 6})
 
     print('Tests passed.')
